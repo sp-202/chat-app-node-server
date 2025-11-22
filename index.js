@@ -3,6 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import connectDB from './config/db.js';
 import userRoutes from './routes/user.routes.js';
+import sessionRoutes from "./routes/session.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -15,6 +16,8 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/api/users', userRoutes);
+
+app.use("/api/sessions", sessionRoutes);
 
 // Root Route
 app.get('/', (req, res) => res.send('User API is running'));

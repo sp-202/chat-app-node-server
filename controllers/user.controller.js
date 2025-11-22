@@ -1,15 +1,91 @@
 import userService from "../services/user.service.js";
 
 class UserController {
+
+    // =======================
+    //  REGISTER USER
+    // =======================
     async createUser(req, res) {
         try {
-            const user = await userService.createUser(req.body);
-            return res.status(201).json(user);
+            const { user, token, session } = await userService.createUser({ ...req.body, req });
+
+            // Send token in cookie
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                secure: true,          // set true on production
+                sameSite: "none",      // for cross-site cookies
+                maxAge: 24 * 60 * 60 * 1000  // 24 hours
+            });
+
+            // session token
+            res.cookie("sessionToken", user.sessionToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 12 * 60 * 60 * 1000,
+                sameSite: "strict"
+            });
+
+            return res.status(201).json({
+                message: "User created successfully",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    username: user.username,
+                    email: user.email,
+                    bio: user.bio
+                }
+            });
+
         } catch (err) {
             return res.status(400).json({ message: err.message });
         }
     }
 
+    
+
+    // =======================
+    //  LOGIN USER
+    // =======================
+    async login(req, res) {
+        try {
+            const { identifier, password } = req.body;
+            const { user, token, session } = await userService.login(identifier, password, req);
+
+            // Send JWT in cookie
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+                maxAge: 24 * 60 * 60 * 1000
+            });
+
+            // session token
+            res.cookie("sessionToken", user.sessionToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 12 * 60 * 60 * 1000,
+                sameSite: "strict"
+            });
+
+            return res.json({
+                message: "Login successful",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    username: user.username,
+                    email: user.email,
+                    bio: user.bio
+                }
+            });
+
+        } catch (err) {
+            return res.status(400).json({ message: err.message });
+        }
+    }
+
+    // =======================
+    //  GET USER BY ID
+    // =======================
     async getUser(req, res) {
         try {
             const user = await userService.getUserById(req.params.id);
@@ -20,6 +96,9 @@ class UserController {
         }
     }
 
+    // =======================
+    //  GET ALL USERS
+    // =======================
     async getAllUsers(req, res) {
         try {
             const users = await userService.getAllUsers();
@@ -29,6 +108,9 @@ class UserController {
         }
     }
 
+    // =======================
+    //  UPDATE USER
+    // =======================
     async updateUser(req, res) {
         try {
             const user = await userService.updateUser(req.params.id, req.body);
@@ -39,6 +121,9 @@ class UserController {
         }
     }
 
+    // =======================
+    //  DELETE USER
+    // =======================
     async deleteUser(req, res) {
         try {
             const result = await userService.deleteUser(req.params.id);
