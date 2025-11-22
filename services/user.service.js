@@ -1,33 +1,10 @@
 import User from "../models/user.model.js";
 import SessionService from "../services/session.service.js";
+import jwtHelper from "../utils/jwt.utils.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 class UserService {
-
-  // Generate JWT (24h)
-  generateToken(user) {
-    return jwt.sign(
-      {
-        userId: user._id,
-        email: user.email
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-  }
-
-  // Generate Session Token (12h)
-  generateSessionToken(user) {
-    return jwt.sign(
-      {
-        userId: user._id,
-        username: user.username
-      },
-      process.env.JWT_SESSION_SECRET,
-      { expiresIn: "12h" }
-    );
-  }
 
   // Create New User
   async createUser(data) {
@@ -48,8 +25,8 @@ class UserService {
       bio
     });
 
-    user.jwtToken = this.generateToken(user);
-    user.sessionToken = this.generateSessionToken(user);
+    user.jwtToken = jwtHelper.generateToken(user);
+    user.sessionToken = jwtHelper.generateSessionToken(user);
 
     user.refreshSession();
     user.refreshTokenExpiry();
@@ -74,8 +51,8 @@ class UserService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw new Error("Invalid password");
 
-    user.jwtToken = this.generateToken(user);
-    user.sessionToken = this.generateSessionToken(user);
+    user.jwtToken = jwtHelper.generateToken(user);
+    user.sessionToken = jwtHelper.generateSessionToken(user);
 
     user.refreshSession();
     user.refreshTokenExpiry();
@@ -104,8 +81,8 @@ class UserService {
     let user = await User.findByIdAndUpdate(id, data, { new: true });
     if (!user) return null;
 
-    user.jwtToken = this.generateToken(user);
-    user.sessionToken = this.generateSessionToken(user);
+    user.jwtToken = jwtHelper.generateToken(user);
+    user.sessionToken = jwtHelper.generateSessionToken(user);
 
     user.refreshSession();
     user.refreshTokenExpiry();
