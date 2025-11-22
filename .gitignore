@@ -1,0 +1,96 @@
+# -----------------------------
+# Node.js / JavaScript / TypeScript
+# -----------------------------
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Build output
+dist/
+build/
+out/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+*.lcov
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Debugging cache
+.cache/
+.nyc_output/
+
+# Next.js / Remix / Other frameworks
+.next/
+.vercel/
+.server/
+.svelte-kit/
+.nuxt/
+
+# Local SSL certificates
+*.pem
+*.key
+*.crt
+
+# Optional: lock files (pick one if needed)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Docker
+docker-data/
+*.tar
+
+# Firebase / GCP
+firebase-debug.log
+.firebaserc
+
+# AWS SAM / Serverless
+.aws-sam/
+.serverless/
+
+# Prisma
+prisma/migrations/*
+
+# PM2 logs
+pm2.log
+pids/
+
+# Misc
+*.orig
