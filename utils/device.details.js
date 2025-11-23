@@ -8,7 +8,7 @@ class DeviceHelper {
     // ----------------------------
     // Get IP Address
     // ----------------------------
-    const ip =
+    let ip =
       req.headers["x-forwarded-for"]?.split(",")[0] ||
       req.connection?.remoteAddress ||
       req.socket?.remoteAddress ||
