@@ -2,37 +2,29 @@
 import SessionModel from "../models/session.model.js";
 import UserModel from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import DeviceHelper from "../utils/device.details.js";
 
 class SessionService {
     // Create and store a session
-
-    // Generate Session Token (12h)
-    generateSessionToken(user) {
-        return jwt.sign(
-            {
-                userId: user._id,
-                username: user.username
-            },
-            process.env.JWT_SESSION_SECRET,
-            { expiresIn: "12h" }
-        );
-    }
-
-    async createSession(user, deviceType, ipAddress) {
+    async createSession(user, sessionToken, req) {
         // if (!user) throw new Error("User not found");
 
-        const sessionToken = this.generateSessionToken(user); // includes userId + username
-        const refreshToken = crypto.randomUUID(); // simple UUID
+        const deviceDetails = DeviceHelper.getClientDetails(req)
 
         const session = await SessionModel.create({
             userId: user._id,
             username: user.username,
-            password: user.password, // as per your requirement
-            deviceType,
-            ipAddress,
             sessionToken,
-            refreshToken,
-            expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours validity
+            refreshToken: '',
+            expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours
+
+            deviceDetails: {
+                deviceType: deviceDetails.deviceType,
+                browser: deviceDetails.browser,
+                os: deviceDetails.os,
+                userAgent: deviceDetails.userAgent,
+                ipAddress: deviceDetails.ip
+            }
         });
 
         return session;
@@ -45,7 +37,7 @@ class SessionService {
 
     // Fetch a specific session
     async getSession(sessionId) {
-        return await SessionModel.findById(sessionId);
+        return SessionModel.findOne({ sessionId });  // ✔ correct field
     }
 
     // Delete session (Logout)

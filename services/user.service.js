@@ -1,7 +1,6 @@
 import User from "../models/user.model.js";
 import SessionService from "../services/session.service.js";
 import jwtHelper from "../utils/jwt.utils.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 class UserService {
@@ -34,7 +33,7 @@ class UserService {
     await user.save();
 
     // create a session entry in DB
-    const session = await SessionService.createSession(user, user.sessionToken, data.req);
+    const session = await SessionService.createSession(user, user.sessionToken, req);
 
     return { user, token: user.jwtToken, session };
   }

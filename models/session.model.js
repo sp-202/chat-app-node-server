@@ -9,14 +9,29 @@ const sessionSchema = new mongoose.Schema({
   },
 
   sessionToken: { type: String, required: true },
+
   refreshToken: {
     type: String,
     default: () => randomBytes(32).toString("hex")
   },
 
-  deviceType: { type: String },
-  ipAddress: { type: String },
+  // =============================================
+  // NESTED DEVICE DETAILS
+  // =============================================
+  deviceDetails: {
+    type: {
+      deviceType: { type: String },
+      browser: { type: String },
+      os: { type: String },
+      userAgent: { type: String },
+      ipAddress: { type: String }
+    },
+    default: {}
+  },
 
+  // =============================================
+  // USER INFO
+  // =============================================
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -25,7 +40,11 @@ const sessionSchema = new mongoose.Schema({
 
   username: { type: String, required: true },
 
+  // =============================================
+  // EXPIRY
+  // =============================================
   expiresAt: { type: Date, required: true },
+
   refreshTokenExpiry: {
     type: Date,
     default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
