@@ -1,21 +1,21 @@
 // services/session.service.js
 import SessionModel from "../models/session.model.js";
 import UserModel from "../models/user.model.js";
-import jwt from "jsonwebtoken";
 import DeviceHelper from "../utils/device.details.js";
 
 class SessionService {
     // Create and store a session
     async createSession(user, sessionToken, req) {
         // if (!user) throw new Error("User not found");
+        console.log("session creation...")
 
         const deviceDetails = DeviceHelper.getClientDetails(req)
+        console.log(deviceDetails)
 
         const session = await SessionModel.create({
             userId: user._id,
             username: user.username,
-            sessionToken,
-            refreshToken: '',
+            sessionToken: sessionToken,
             expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours
 
             deviceDetails: {

@@ -30,11 +30,13 @@ class UserService {
     user.refreshSession();
     user.refreshTokenExpiry();
 
-    await user.save();
+    
 
     // create a session entry in DB
+    console.log("user creation init..")
     const session = await SessionService.createSession(user, user.sessionToken, req);
-
+    await user.save();
+    
     return { user, token: user.jwtToken, session };
   }
 
