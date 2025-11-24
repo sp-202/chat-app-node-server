@@ -12,7 +12,8 @@ const sessionSchema = new mongoose.Schema({
 
   refreshToken: {
     type: String,
-    default: () => randomBytes(32).toString("hex")
+    default: () => randomBytes(32).toString("hex"),
+    index: true
   },
 
   // =============================================

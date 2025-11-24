@@ -7,7 +7,7 @@ class UserController {
     // =======================
     async createUser(req, res) {
         try {
-            const { user, token, session } = await userService.createUser({ ...req.body, req });
+            const { user, token, session, refreshToken } = await userService.createUser({ ...req.body, req });
 
             // Send token in cookie
             res.cookie("jwt", token, {
@@ -22,6 +22,14 @@ class UserController {
                 httpOnly: true,
                 secure: true,
                 maxAge: 12 * 60 * 60 * 1000,
+                sameSite: "strict"
+            });
+
+            // refresh token
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
                 sameSite: "strict"
             });
 
@@ -41,7 +49,7 @@ class UserController {
         }
     }
 
-    
+
 
     // =======================
     //  LOGIN USER
@@ -49,7 +57,7 @@ class UserController {
     async login(req, res) {
         try {
             const { identifier, password } = req.body;
-            const { user, token, session } = await userService.login(identifier, password, req);
+            const { user, token, session, refreshToken } = await userService.login(identifier, password, req);
 
             // Send JWT in cookie
             res.cookie("jwt", token, {
@@ -64,6 +72,14 @@ class UserController {
                 httpOnly: true,
                 secure: true,
                 maxAge: 12 * 60 * 60 * 1000,
+                sameSite: "strict"
+            });
+
+            // refresh token
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
                 sameSite: "strict"
             });
 
