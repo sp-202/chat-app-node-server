@@ -24,20 +24,21 @@ class UserService {
       bio
     });
 
-    user.jwtToken = jwtHelper.generateToken(user);
+    const dynamicSecret = process.env.JWT_SECRET + user.password;
+    user.jwtToken = jwtHelper.generateToken(user, dynamicSecret);
     user.sessionToken = jwtHelper.generateSessionToken(user);
 
     user.refreshSession();
     user.refreshTokenExpiry();
 
-    
+
 
     // create a session entry in DB
     console.log("user creation init..")
     const session = await SessionService.createSession(user, user.sessionToken, req);
     await user.save();
-    
-    return { user, token: user.jwtToken, session };
+
+    return { user, token: user.jwtToken, session, refreshToken: session.refreshToken };
   }
 
 
@@ -52,7 +53,8 @@ class UserService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw new Error("Invalid password");
 
-    user.jwtToken = jwtHelper.generateToken(user);
+    const dynamicSecret = process.env.JWT_SECRET + user.password;
+    user.jwtToken = jwtHelper.generateToken(user, dynamicSecret);
     user.sessionToken = jwtHelper.generateSessionToken(user);
 
     user.refreshSession();
@@ -62,7 +64,7 @@ class UserService {
     // create login session
     const session = await SessionService.createSession(user, user.sessionToken, req);
 
-    return { user, token: user.jwtToken, session };
+    return { user, token: user.jwtToken, session, refreshToken: session.refreshToken };
   }
 
 
@@ -82,7 +84,8 @@ class UserService {
     let user = await User.findByIdAndUpdate(id, data, { new: true });
     if (!user) return null;
 
-    user.jwtToken = jwtHelper.generateToken(user);
+    const dynamicSecret = process.env.JWT_SECRET + user.password;
+    user.jwtToken = jwtHelper.generateToken(user, dynamicSecret);
     user.sessionToken = jwtHelper.generateSessionToken(user);
 
     user.refreshSession();

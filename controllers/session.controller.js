@@ -37,12 +37,25 @@ class SessionController {
 
   async renewSession(req, res) {
     try {
-      const session = await sessionService.renewSession(req.params.sessionId);
+      const refreshToken = req.cookies?.refreshToken;
+      if (!refreshToken) return res.status(401).json({ success: false, message: "No refresh token provided" });
 
-      res.cookie("session_token", session.sessionToken, {
+      const session = await sessionService.renewSession(refreshToken);
+
+      // Update Session Token Cookie
+      res.cookie("sessionToken", session.sessionToken, {
         httpOnly: true,
         secure: true,
         maxAge: 12 * 60 * 60 * 1000,
+        sameSite: "strict"
+      });
+
+      // Update Refresh Token Cookie
+      res.cookie("refreshToken", session.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: "strict"
       });
 
       return res.status(200).json({
