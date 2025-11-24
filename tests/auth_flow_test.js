@@ -1,17 +1,17 @@
-import fetch from 'node-fetch';
 import { CookieJar } from 'tough-cookie';
-import { fetch as fetchCookie } from 'fetch-cookie';
+import fetchCookie from 'fetch-cookie'; // default import
 
 const jar = new CookieJar();
-const fetchWithCookies = fetchCookie(fetch, jar);
 
-const BASE_URL = 'http://localhost:5000'; // Assuming port 5000, adjust if needed
+// Wrap native fetch with fetch-cookie
+const fetchWithCookies = fetchCookie(globalThis.fetch, jar);
+
+const BASE_URL = 'http://localhost:8080';
 
 async function runTest() {
     try {
         console.log('--- Starting Auth Flow Test ---');
 
-        // 1. Register User
         const uniqueId = Date.now();
         const userData = {
             name: `Test User ${uniqueId}`,
@@ -20,8 +20,9 @@ async function runTest() {
             password: 'password123'
         };
 
+        // 1. Register
         console.log('\n1. Registering User...');
-        const registerRes = await fetchWithCookies(`${BASE_URL}/api/users/register`, {
+        const registerRes = await fetchWithCookies(`${BASE_URL}/api/users`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData)
@@ -31,10 +32,9 @@ async function runTest() {
 
         if (registerRes.status !== 201) throw new Error('Registration failed');
 
-        // Check cookies
         console.log('Cookies after registration:', jar.getCookieStringSync(BASE_URL));
 
-        // 2. Login (Optional, since registration logs in, but good to test)
+        // 2. Login
         console.log('\n2. Logging in...');
         const loginRes = await fetchWithCookies(`${BASE_URL}/api/users/login`, {
             method: 'POST',
@@ -46,11 +46,8 @@ async function runTest() {
 
         if (loginRes.status !== 200) throw new Error('Login failed');
 
-        // 3. Renew Session
+        // 3. Renew session
         console.log('\n3. Renewing Session...');
-        // Wait a bit to ensure timestamps are different (optional)
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
         const renewRes = await fetchWithCookies(`${BASE_URL}/api/sessions/renew`, {
             method: 'PUT'
         });

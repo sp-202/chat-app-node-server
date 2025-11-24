@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import userRoutes from './routes/user.routes.js';
 import sessionRoutes from "./routes/session.routes.js";
@@ -13,6 +14,7 @@ connectDB();
 
 // Middleware
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // Routes
 app.use('/api/users', userRoutes);

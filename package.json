@@ -15,10 +15,14 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "fetch-cookie": "^3.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.0.0",
+    "node-fetch": "^3.3.2",
+    "tough-cookie": "^6.0.0",
     "ua-parser-js": "^2.0.6"
   },
   "devDependencies": {
